@@ -1,0 +1,3 @@
+/home/choped/Documents/projects/Sockets/cmake-build-debug/CMakeFiles/Sockets.dir
+/home/choped/Documents/projects/Sockets/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/choped/Documents/projects/Sockets/cmake-build-debug/CMakeFiles/rebuild_cache.dir
