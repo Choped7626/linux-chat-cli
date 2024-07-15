@@ -36,12 +36,15 @@ char* posPointer(){
     return buff;
 }
 
+int cerrar = 0;
+
 void* recibirMensajes(void* ptr){
     struct argsCliente *args = ptr;
     char buffer[287];
 
     long cnt;
     int i;
+    int pechar;
 
     char salir[287];
     sprintf(salir, "%s left the chat\n" , args->nombreCliente);
@@ -53,15 +56,12 @@ void* recibirMensajes(void* ptr){
         if(cnt < 0)
             gilipollas2("Se te jodio el mensaje tipo");
 
-        //char* posicion;
-        //posicion = posPointer();
-
         printf("%s", buffer);
-        //printf("%s", posicion);
 
+        pechar = strncmp("La conexión está siendo cortada por el host...\n", buffer, 49);
         i = strcmp(salir , buffer);
-        if (i == 0){
-            //free(posicion);
+        if (i == 0 || pechar == 0){
+            cerrar = 1;
             break;
         }
     }
@@ -119,20 +119,20 @@ void lanzarCliente(char* hostName, int nomeroPorto){
     }
 
     while(1){
-        bzero(buffer, 255);
-        fgets(buffer, 255, stdin);
-        int i = strncmp("Exit", buffer, 4);
+        if(cerrar != 1){
+            bzero(buffer, 255);
+            fgets(buffer, 255, stdin);
+            int i = strncmp("Exit", buffer, 4);
 
-        if(buffer[0] != '\n')
-            cnt = write(soquetFD, buffer, strlen(buffer));
-        if(cnt < 0)
-            gilipollas2("Fallo en escritura");
-
-        if(i == 0){
-            if(cnt < 0)
+            if(buffer[0] != '\n')
+                cnt = write(soquetFD, buffer, strlen(buffer));
+            if(cnt < 0 && cerrar != 1)
                 gilipollas2("Fallo en escritura");
+
+            if(i == 0)
+                break;
+        } else
             break;
-        }
     }
 
     pthread_join(fiosCliente->id, NULL);

@@ -40,6 +40,7 @@ void *lanzarFioServer(void *ptr){
     char buffer[255];
     char nombre[32];
     char send[288];
+    bzero(send, 288);
     long datosLeidosEscritos;
     int PrimeraIteracion = 0;
     int comparacion = -1;
@@ -47,7 +48,7 @@ void *lanzarFioServer(void *ptr){
     while(1){
         if (cerrar == -1){
             printf("%s was disconnected\n", nombre);
-            write(args->novoCalcetinFD , "La conexión ha sido cortada por el host\n", 42);
+            write(args->novoCalcetinFD , "La conexión está siendo cortada por el host...\n", 49);
             break;
         }
 
@@ -56,7 +57,7 @@ void *lanzarFioServer(void *ptr){
 
         if (cerrar == -1){
             printf("%s was disconnected\n", nombre);
-            write(args->novoCalcetinFD , "La conexión ha sido cortada por el host\n", 42);
+            write(args->novoCalcetinFD , "La conexión está siendo cortada por el host...\n", 49);
             break;
         }
 
@@ -173,6 +174,8 @@ void lanzarServer(int nomeroPorto) {
 
     soquetFD = socket(AF_INET, SOCK_STREAM, 0);
     if (soquetFD < 0){
+        free(fios);
+        free(fioReceptor);
         perror("Error abriendo el soquet(putada)");
         exit(1);
     }
@@ -184,6 +187,9 @@ void lanzarServer(int nomeroPorto) {
     server_Address.sin_port = htons(nomeroPorto);
 
     if (bind(soquetFD, (struct sockaddr *) &server_Address, sizeof(server_Address)) < 0){
+        free(fios);
+        free(fioReceptor);
+        close(soquetFD);
         perror("Fallo el bindeo(putada)");
         exit(1);
     }
@@ -224,6 +230,7 @@ void lanzarServer(int nomeroPorto) {
         free(fios[i].args);
     }
 
+    free(fioReceptor->receptor1);
     free(fios);
     free(fioReceptor);
     close(soquetFD);
